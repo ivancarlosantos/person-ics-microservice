@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/person-microservice.jar
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/person-ics-microservice.jar

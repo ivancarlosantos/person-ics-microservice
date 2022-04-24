@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import core.ics.person.controller.methodes.PersonControllerMethodes;
+import core.ics.person.doctype.Documentation;
 import core.ics.person.dto.PersonDTO;
+import core.ics.person.enums.Author;
 import core.ics.person.model.Person;
 import core.ics.person.service.PersonService;
 
@@ -31,6 +33,7 @@ public class PersonController implements PersonControllerMethodes{
 	private ModelMapper mapper;
 	
 	@Override
+	@Documentation(author = Author.IVAN_SANTOS)
 	@PostMapping(path = "/save")
 	public ResponseEntity<PersonDTO> save(@RequestBody Person persons) {
 		Person personSaved = personService.personSave(persons);
@@ -39,6 +42,7 @@ public class PersonController implements PersonControllerMethodes{
 	}
 
 	@Override
+	@Documentation(author = Author.IVAN_SANTOS)
 	@GetMapping(path = "/list-all")
 	public ResponseEntity<Collection<Person>> listAll(Person filter) {
 		Collection<Person> list = personService.listAll(filter);
@@ -46,6 +50,7 @@ public class PersonController implements PersonControllerMethodes{
 	}
 
 	@Override
+	@Documentation(author = Author.IVAN_SANTOS)
 	@PutMapping(path = "/update/{id}")
 	public ResponseEntity<PersonDTO> update(@PathVariable Long id, @RequestBody Person persons) {
 		Person personUpdate = personService.update(id, persons);
@@ -54,6 +59,7 @@ public class PersonController implements PersonControllerMethodes{
 	}
 
 	@Override
+	@Documentation(author = Author.IVAN_SANTOS)
 	@DeleteMapping(path = "/delete/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable Long id) {
 		// TODO Auto-generated method stub
@@ -61,6 +67,7 @@ public class PersonController implements PersonControllerMethodes{
 	}
 
 	@Override
+	@Documentation(author = Author.IVAN_SANTOS)
 	@DeleteMapping(path = "/delete")
 	public ResponseEntity<?> delete(@PathVariable Long id, Person person) {
 		// TODO Auto-generated method stub
