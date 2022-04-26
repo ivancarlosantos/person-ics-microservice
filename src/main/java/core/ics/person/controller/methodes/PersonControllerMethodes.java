@@ -1,6 +1,6 @@
 package core.ics.person.controller.methodes;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
@@ -11,7 +11,7 @@ public interface PersonControllerMethodes {
 
 	public ResponseEntity<PersonDTO> save(Person persons);
 	
-	public ResponseEntity<Collection<Person>> listAll(Person filter);
+	public ResponseEntity<List<Person>> listAll(Person filter);
 	
 	public ResponseEntity<PersonDTO> update(Long id, Person persons);
 	

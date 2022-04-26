@@ -1,7 +1,7 @@
 package core.ics.person.service;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -46,13 +46,16 @@ public class PersonService implements PersonServiceMethodes {
 	}
 
 	@Override
-	public Collection<Person> listAll(Person filter) {
+	public List<Person> listAll(Person filter) {
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING);
 		Example<Person> example = Example.of(filter, matcher);
 
-		Collection<Person> collection = personRepository.findAll(example).stream()
-				.filter(p -> p.getStatus().equals(PersonStatus.ACTIVE)).collect(Collectors.toList());
-		return collection;
+		List<Person> list = personRepository
+				.findAll(example)
+				.stream()
+				.filter(p -> p.getStatus().equals(PersonStatus.ACTIVE))
+				.collect(Collectors.toList());
+		return list;
 	}
 
 	@Override

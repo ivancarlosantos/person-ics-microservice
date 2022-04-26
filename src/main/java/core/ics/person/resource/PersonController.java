@@ -1,6 +1,6 @@
 package core.ics.person.resource;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ public class PersonController implements PersonControllerMethodes{
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
 	@GetMapping(path = "/list-all")
-	public ResponseEntity<Collection<Person>> listAll(Person filter) {
-		Collection<Person> list = personService.listAll(filter);
+	public ResponseEntity<List<Person>> listAll(Person filter) {
+		List<Person> list = personService.listAll(filter);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 
