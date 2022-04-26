@@ -13,6 +13,8 @@ public interface PersonControllerMethodes {
 	
 	public ResponseEntity<List<Person>> listAll(Person filter);
 	
+	public ResponseEntity<List<Person>> fetchName(String name);
+	
 	public ResponseEntity<PersonDTO> update(Long id, Person persons);
 	
 	public ResponseEntity<?> deleteById(Long id);

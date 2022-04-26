@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,12 +51,19 @@ public class PersonService implements PersonServiceMethodes {
 		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING);
 		Example<Person> example = Example.of(filter, matcher);
 
-		List<Person> list = personRepository
-				.findAll(example)
-				.stream()
-				.filter(p -> p.getStatus().equals(PersonStatus.ACTIVE))
-				.collect(Collectors.toList());
+		List<Person> list = personRepository.findAll(example).stream()
+				.filter(p -> p.getStatus().equals(PersonStatus.ACTIVE)).collect(Collectors.toList());
 		return list;
+	}
+
+	@Override
+	public List<Person> fetchName(String name) {
+		List<Person> findName = personRepository.findByName(name);
+		if (findName.isEmpty()) {
+			throw new RuntimeException("name: " + name + " " + HttpStatus.NOT_FOUND);
+		}
+		
+		return findName;
 	}
 
 	@Override
@@ -73,7 +81,6 @@ public class PersonService implements PersonServiceMethodes {
 		newPerson.setModifyDate(LocalDateTime.now());
 		newPerson.setStatus(oldPerson.getStatus());
 
-		
 		return personRepository.save(newPerson);
 	}
 

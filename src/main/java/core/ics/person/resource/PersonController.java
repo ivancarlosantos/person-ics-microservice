@@ -48,6 +48,14 @@ public class PersonController implements PersonControllerMethodes{
 		List<Person> list = personService.listAll(filter);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
+	
+	@Override
+	@Documentation(author = Author.IVAN_SANTOS)
+	@GetMapping(path = "/fetch/{name}")
+	public ResponseEntity<List<Person>> fetchName(@PathVariable(name = "name") String name) {
+		List<Person> list = personService.fetchName(name.toUpperCase());
+		return ResponseEntity.status(HttpStatus.OK).body(list);
+	}
 
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
