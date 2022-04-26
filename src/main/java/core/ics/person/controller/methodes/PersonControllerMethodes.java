@@ -1,6 +1,7 @@
 package core.ics.person.controller.methodes;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
@@ -13,7 +14,7 @@ public interface PersonControllerMethodes {
 	
 	public ResponseEntity<List<Person>> listAll(Person filter);
 	
-	public ResponseEntity<List<Person>> fetchName(String name);
+	public ResponseEntity<Optional<Person>> fetchName(String name);
 	
 	public ResponseEntity<PersonDTO> update(Long id, Person persons);
 	

@@ -57,9 +57,11 @@ public class PersonService implements PersonServiceMethodes {
 	}
 
 	@Override
-	public List<Person> fetchName(String name) {
-		List<Person> findName = personRepository.findByName(name);
-		if (findName.isEmpty()) {
+	public Optional<Person> fetchName(String name) {
+		Optional<Person> findName = personRepository.fetchByName(name);
+		if (!findName.isEmpty()) {
+			//
+		}else {
 			throw new RuntimeException("name: " + name + " " + HttpStatus.NOT_FOUND);
 		}
 		
@@ -73,7 +75,7 @@ public class PersonService implements PersonServiceMethodes {
 		String accessKey = generateAccessKey(oldPerson);
 		Person newPerson = personRepository.findById(id).get();
 
-		newPerson.setName(oldPerson.getName());
+		newPerson.setNamed(oldPerson.getNamed());
 		newPerson.setGender(oldPerson.getGender());
 		if (accessKey != null) {
 			oldPerson.setAccessKey(accessKey);

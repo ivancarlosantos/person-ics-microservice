@@ -1,6 +1,7 @@
 package core.ics.person.resource;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,9 @@ public class PersonController implements PersonControllerMethodes{
 	
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
-	@GetMapping(path = "/fetch/{name}")
-	public ResponseEntity<List<Person>> fetchName(@PathVariable(name = "name") String name) {
-		List<Person> list = personService.fetchName(name.toUpperCase());
+	@GetMapping(path = "/fetch/{named}")
+	public ResponseEntity<Optional<Person>> fetchName(@PathVariable(name = "named") String named) {
+		Optional<Person> list = personService.fetchName(named);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 
