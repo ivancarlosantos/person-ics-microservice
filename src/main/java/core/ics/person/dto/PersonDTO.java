@@ -20,11 +20,13 @@ public class PersonDTO implements Serializable{
 	
 	private String named;
 	
+	private String cpf;
+	
 	private Gender gender;
 	
 	private String accessKey;
 	
-	private LocalDateTime registerDate;
+	//private LocalDateTime registerDate;
 	
 	private LocalDateTime modifyDate;
 	

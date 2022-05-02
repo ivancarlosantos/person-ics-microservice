@@ -30,6 +30,8 @@ public class Person implements Serializable{
 	
 	private String named;
 	
+	private String cpf;
+	
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 	
