@@ -1,0 +1,71 @@
+version: '3.5'
+
+services:
+
+  db:
+    image: postgres:11
+    restart: always
+    container_name: postgres_database
+    volumes:
+      - "./data/postgres:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    networks:
+      - msnetwork   
+    environment:
+      - POSTGRES_DB=person
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345
+      
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - 8090:8080
+    networks:
+      - msnetwork      
+
+  app:
+    image: person-ics-microservice
+    container_name: person-ics-microservice
+    build:
+      context: .
+    ports:
+      - "8081:8081"
+    networks:
+      - msnetwork  
+    depends_on:
+      - db
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=12345
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/person
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - msnetwork  
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/local/bin/docker:/usr/local/bin/docker
+
+  portainer:
+    image: portainer/portainer-ce:2.11.0
+    container_name: portainer-io
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9000:9000"
+    networks:
+      - msnetwork  
+
+networks:
+  msnetwork:      

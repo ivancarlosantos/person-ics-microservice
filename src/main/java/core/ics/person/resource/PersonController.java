@@ -1,5 +1,8 @@
 package core.ics.person.resource;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,14 +28,14 @@ import core.ics.person.service.PersonService;
 
 @RestController
 @RequestMapping(path = "/api/person")
-public class PersonController implements PersonControllerMethodes{
+public class PersonController implements PersonControllerMethodes {
 
 	@Autowired
 	private PersonService personService;
-	
+
 	@Autowired
 	private ModelMapper mapper;
-	
+
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
 	@PostMapping(path = "/save")
@@ -49,13 +52,20 @@ public class PersonController implements PersonControllerMethodes{
 		List<Person> list = personService.listAll(filter);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
-	
+
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
 	@GetMapping(path = "/fetch/{named}")
 	public ResponseEntity<Optional<Person>> fetchName(@PathVariable(name = "named") String named) {
 		Optional<Person> list = personService.fetchName(named);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
+	}
+
+	@Documentation(author = Author.IVAN_SANTOS)
+	@GetMapping(path = "/test")
+	public ResponseEntity<String> testConnection() throws UnknownHostException {
+		String test = "Timestamp: " + LocalDateTime.now() + " Address: " + InetAddress.getLocalHost();	
+		return ResponseEntity.status(HttpStatus.OK).body(test);
 	}
 
 	@Override
