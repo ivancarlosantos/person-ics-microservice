@@ -24,6 +24,18 @@ services:
     ports:
       - 8090:8080
     networks:
+      - msnetwork
+      
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: adminex
+    ports:
+      - "15432:80"
+    networks:
       - msnetwork      
 
   app:
@@ -34,9 +46,7 @@ services:
     ports:
       - "8081:8081"
     networks:
-      - msnetwork  
-    depends_on:
-      - db
+      - msnetwork 
     restart: always
     environment:
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -68,4 +78,5 @@ services:
       - msnetwork  
 
 networks:
-  msnetwork:      
+  msnetwork:
+    driver: bridge      

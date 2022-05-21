@@ -24,12 +24,12 @@ public class PersonService implements PersonServiceMethodes {
 	@Autowired
 	private PersonRepository personRepository;
 
-	private String generateAccessKey(Person person) {
+	public String generateAccessToken(Person person) {
 
 		UUID key = UUID.randomUUID();
 		String accessKey = null;
-		if (person.getAccessKey() == null) {
-			accessKey = key.toString().toUpperCase();
+		if (person.getAccessToken() == null) {
+			accessKey = key.toString().substring(0, 10).toUpperCase();
 		}
 		return accessKey;
 	}
@@ -37,8 +37,9 @@ public class PersonService implements PersonServiceMethodes {
 	@Override
 	@Transactional
 	public Person personSave(Person person) {
-		String accessKey = generateAccessKey(person);
-		person.setAccessKey(accessKey);
+
+		String accessKey = generateAccessToken(person);
+		person.setAccessToken(accessKey);
 		person.setStatus(PersonStatus.ACTIVE);
 		person.setRegisterDate(LocalDateTime.now());
 
@@ -52,37 +53,48 @@ public class PersonService implements PersonServiceMethodes {
 
 		List<Person> list = personRepository.findAll(example).stream()
 				.filter(p -> p.getStatus().equals(PersonStatus.ACTIVE)).collect(Collectors.toList());
+
 		return list;
+	}
+	
+	public Optional<Person> finPersonByID(Long id) {
+		return personRepository.findById(id);
 	}
 
 	@Override
 	public Optional<Person> fetchName(String name) {
-		Optional<Person> findName = personRepository.fetchByName(name);
-		if (!findName.isEmpty()) {
-			//
-		}else {
+		Optional<Person> fetchName = personRepository.fetchByName(name);
+		if (!fetchName.isPresent()) {
 			Optional.empty();
 		}
-		
-		return findName;
+
+		return fetchName;
+	}
+
+	public Optional<Person> fetchAddress(String cep) {
+		Optional<Person> fetch = personRepository.fetchAddress(cep);
+		if (fetch.isEmpty()) {
+			Optional.empty();
+		}
+
+		return fetch;
 	}
 
 	@Override
-	@Transactional
 	public Person update(Long id, Person oldPerson) {
 
-		String accessKey = generateAccessKey(oldPerson);
+		String accessKey = generateAccessToken(oldPerson);
 		Person newPerson = personRepository.findById(id).get();
 
-		newPerson.setNamed(oldPerson.getNamed());
+		newPerson.setPersonName(oldPerson.getPersonName());
 		newPerson.setGender(oldPerson.getGender());
 		if (accessKey != null) {
-			oldPerson.setAccessKey(accessKey);
+			oldPerson.setAccessToken(accessKey);
 		}
 		newPerson.setModifyDate(LocalDateTime.now());
 		newPerson.setStatus(oldPerson.getStatus());
 
-		return personRepository.save(newPerson);
+		return personRepository.saveAndFlush(newPerson);
 	}
 
 	@Override

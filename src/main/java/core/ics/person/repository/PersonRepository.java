@@ -12,6 +12,9 @@ import core.ics.person.model.Person;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long>{
 	
-	@Query(nativeQuery = true, value = "SELECT * FROM person q WHERE q.named LIKE %?1%")
-	Optional<Person> fetchByName(@Param(value = "named") String named);
+	@Query(nativeQuery = true, value = "SELECT * FROM person q WHERE q.person_name LIKE %?1%")
+	Optional<Person> fetchByName(@Param(value = "personName") String personName);
+	
+	@Query(nativeQuery = true, value = "SELECT * FROM person q WHERE q.address LIKE %?1%")
+	Optional<Person> fetchAddress(@Param(value = "address") String address);
 }

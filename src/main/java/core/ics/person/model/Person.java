@@ -10,13 +10,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import core.ics.person.enums.Gender;
 import core.ics.person.enums.PersonStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -26,16 +30,19 @@ public class Person implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	private Long id;
 	
-	private String named;
+	private String personName;
 	
 	private String cpf;
+	
+	private String address;
 	
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 	
-	private String accessKey;
+	private String accessToken;
 	
 	private LocalDateTime registerDate;
 	

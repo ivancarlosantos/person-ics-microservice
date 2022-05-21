@@ -1,6 +1,6 @@
 package core.ics.person.service.methodes;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import core.ics.person.model.Person;
@@ -9,7 +9,7 @@ public interface PersonServiceMethodes {
 
 	Person personSave(Person person);
 
-	Collection<Person> listAll(Person filter);
+	List<Person> listAll(Person filter);
 	
 	Optional<Person> fetchName(String name);
 
