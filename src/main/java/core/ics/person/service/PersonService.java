@@ -80,14 +80,28 @@ public class PersonService implements PersonServiceMethodes {
 		return fetch;
 	}
 
+	private Person findID(Long id){
+		Optional<Person> findID = personRepository.findById(id);
+		Person person = null;
+		if (!findID.isPresent()){
+			throw new RuntimeException("Person not found");
+		}
+		person = findID.get();
+
+		return person;
+	}
+
 	@Override
 	public Person update(Long id, Person oldPerson) {
 
+		Person newPerson = findID(id);
 		String accessKey = generateAccessToken(oldPerson);
-		Person newPerson = personRepository.findById(id).get();
 
 		newPerson.setPersonName(oldPerson.getPersonName());
+		newPerson.setCpf(oldPerson.getCpf());
+		newPerson.setAddress(oldPerson.getAddress());
 		newPerson.setGender(oldPerson.getGender());
+
 		if (accessKey != null) {
 			oldPerson.setAccessToken(accessKey);
 		}
@@ -107,14 +121,8 @@ public class PersonService implements PersonServiceMethodes {
 	}
 
 	@Override
-	@Transactional
 	public void delete(Long id, Person person) {
-		Optional<Person> findPerson = personRepository.findById(id);
-		if (findPerson.isPresent()) {
-			person = findPerson.get();
-			personRepository.delete(person);
-		} else {
-			throw new RuntimeException("Error");
-		}
+		//Deprecaated
 	}
+
 }
