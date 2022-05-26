@@ -3,7 +3,6 @@ package core.ics.person.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,32 +13,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import core.ics.person.enums.PersonStatus;
+import core.ics.person.model.GenerateToken;
 import core.ics.person.model.Person;
 import core.ics.person.repository.PersonRepository;
 import core.ics.person.service.methodes.PersonServiceMethodes;
+import core.ics.person.utils.Token;
 
 @Service
 public class PersonService implements PersonServiceMethodes {
 
 	@Autowired
 	private PersonRepository personRepository;
-
-	public String generateAccessToken(Person person) {
-
-		UUID key = UUID.randomUUID();
-		String accessKey = null;
-		if (person.getAccessToken() == null) {
-			accessKey = key.toString().substring(0, 10).toUpperCase();
-		}
-		return accessKey;
-	}
+	
+	@Autowired
+	private Token tokenizer;
 
 	@Override
 	@Transactional
 	public Person personSave(Person person) {
 
-		String accessKey = generateAccessToken(person);
-		person.setAccessToken(accessKey);
+		GenerateToken token = tokenizer.generateToken();
+
+		person.setToken(token.getToken());
 		person.setStatus(PersonStatus.ACTIVE);
 		person.setRegisterDate(LocalDateTime.now());
 
@@ -95,7 +90,7 @@ public class PersonService implements PersonServiceMethodes {
 	public Person update(Long id, Person oldPerson) {
 
 		Person newPerson = findID(id);
-		String accessKey = generateAccessToken(oldPerson);
+		GenerateToken accessKey = tokenizer.generateToken();
 
 		newPerson.setPersonName(oldPerson.getPersonName());
 		newPerson.setCpf(oldPerson.getCpf());
@@ -103,12 +98,12 @@ public class PersonService implements PersonServiceMethodes {
 		newPerson.setGender(oldPerson.getGender());
 
 		if (accessKey != null) {
-			oldPerson.setAccessToken(accessKey);
+			newPerson.setToken(oldPerson.getToken());
 		}
 		newPerson.setModifyDate(LocalDateTime.now());
 		newPerson.setStatus(oldPerson.getStatus());
 
-		return personRepository.saveAndFlush(newPerson);
+		return personRepository.save(newPerson);
 	}
 
 	@Override

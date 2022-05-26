@@ -25,18 +25,6 @@ services:
       - 8090:8080
     networks:
       - msnetwork
-      
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: adminex
-    ports:
-      - "15432:80"
-    networks:
-      - msnetwork      
 
   app:
     image: person-ics-microservice
@@ -54,16 +42,18 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/person
 
   jenkins:
-    image: jenkins/jenkins:lts
+    image: jenkins/jenkins:lts-jdk11
     container_name: jenkins
     restart: always
     ports:
       - "8080:8080"
+      - "50000:50000"
     networks:
       - msnetwork  
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/local/bin/docker:/usr/local/bin/docker
+      - ~/jenkins_data:/var/jenkins_home
 
   portainer:
     image: portainer/portainer-ce:2.11.0

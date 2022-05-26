@@ -10,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import core.ics.person.enums.Gender;
 import core.ics.person.enums.PersonStatus;
 import lombok.AllArgsConstructor;
@@ -30,7 +28,7 @@ public class Person implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonIgnore
+	//@JsonIgnore
 	private Long id;
 	
 	private String personName;
@@ -42,7 +40,7 @@ public class Person implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 	
-	private String accessToken;
+	private String token;
 	
 	private LocalDateTime registerDate;
 	

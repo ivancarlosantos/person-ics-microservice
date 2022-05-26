@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,19 +37,13 @@ public class PersonController implements PersonControllerMethodes {
 	@Autowired
 	private AddressRequest addressRequest;
 
-	@Autowired
-	private ModelMapper mapper;
-
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
 	@PostMapping(path = "/save")
 	public ResponseEntity<PersonDTO> save(@RequestBody Person persons) {
-		
 		Address address = addressRequest.requestCEP(persons.getAddress());
-
 		Person personSaved = personService.personSave(persons);
-		
-		PersonDTO dto = mapper.map(personSaved, PersonDTO.class);
+		PersonDTO dto = new PersonDTO(personSaved);
 		dto.setAddress(address);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dto);
 	}
@@ -67,7 +60,7 @@ public class PersonController implements PersonControllerMethodes {
 	@GetMapping(path = "/find-cep/{cep}")
 	public ResponseEntity<PersonDTO> fetchAddress(@PathVariable String cep) {
 		Optional<Person> person = personService.fetchAddress(cep);
-		PersonDTO dto = mapper.map(person.get(), PersonDTO.class);
+		PersonDTO dto = new PersonDTO(person.get());
 		Address address = addressRequest.requestCEP(cep);
 		dto.setAddress(address);
 		return ResponseEntity.status(HttpStatus.OK).body(dto);
@@ -79,12 +72,8 @@ public class PersonController implements PersonControllerMethodes {
 	public ResponseEntity<PersonDTO> fetchName(@PathVariable(name = "named") String named) {
 		Optional<Person> list = personService.fetchName(named);
 		Address address = addressRequest.requestCEP(list.get().getAddress());
-		PersonDTO dto = mapper.map(address, PersonDTO.class);
-		dto.setPersonName(list.get().getPersonName());
-		dto.setCpf(list.get().getCpf());
-		dto.setAccessKey(list.get().getAccessToken());
-		dto.setGender(list.get().getGender());
-		dto.setStatus(list.get().getStatus());
+		PersonDTO dto = new PersonDTO(list.get());
+		dto.setAddress(address);
 		return ResponseEntity.status(HttpStatus.OK).body(dto);
 	}
 
@@ -98,25 +87,24 @@ public class PersonController implements PersonControllerMethodes {
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
 	@PutMapping(path = "/update/{id}")
-	public ResponseEntity<PersonDTO> update(@PathVariable Long id, @RequestBody Person persons) {
+	public ResponseEntity<PersonDTO> update(@PathVariable(name = "id") Long id, @RequestBody Person persons) {
 		Person personUpdate = personService.update(id, persons);
-		PersonDTO dto = mapper.map(personUpdate, PersonDTO.class);
+		PersonDTO dto = new PersonDTO(personUpdate);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dto);
 	}
 
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
 	@DeleteMapping(path = "/delete/{id}")
-	public ResponseEntity<?> deleteById(@PathVariable Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public ResponseEntity<Object> deleteById(@PathVariable Long id) {
+		personService.deleteById(id);
+		return ResponseEntity.ok(HttpStatus.NO_CONTENT);
 	}
 
 	@Override
 	@Documentation(author = Author.IVAN_SANTOS)
 	@DeleteMapping(path = "/delete")
 	public ResponseEntity<?> delete(@PathVariable Long id, Person person) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
