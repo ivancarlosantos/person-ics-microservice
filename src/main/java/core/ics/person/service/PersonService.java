@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import core.ics.person.dto.PersonDTO;
 import core.ics.person.enums.PersonStatus;
 import core.ics.person.model.Address;
 import core.ics.person.model.GenerateToken;
@@ -65,8 +63,10 @@ public class PersonService implements PersonServiceMethodes {
 		return list;
 	}
 	
-	public List<PersonDTO> list(){
-		return personRepository.findAll().stream().map(p->new PersonDTO(p)).collect(Collectors.toList());
+	public List<Person> list(){
+		return personRepository.findAll().stream().map((p)->{	
+			return p;
+		}).collect(Collectors.toList());
 	}
 	
 	public Optional<Person> finPersonByID(Long id) {
@@ -86,7 +86,7 @@ public class PersonService implements PersonServiceMethodes {
 	public Optional<Person> fetchAddress(String cep) {
 		Optional<Person> fetch = personRepository.fetchAddress(cep);
 		if (fetch.isEmpty() || !fetch.isPresent()) {
-			throw new RuntimeException("CEP "+HttpStatus.NOT_FOUND);
+			Optional.empty();
 		}
 
 		return fetch;
@@ -106,17 +106,13 @@ public class PersonService implements PersonServiceMethodes {
 	@Override
 	public Person update(Long id, Person oldPerson) {
 
-		GenerateToken accessKey = tokenizer.generateToken();
 		Person newPerson = findID(id);
 
 		newPerson.setPersonName(oldPerson.getPersonName());
 		newPerson.setCpf(oldPerson.getCpf());
 		newPerson.setAddress(oldPerson.getAddress());
 		newPerson.setGender(oldPerson.getGender());
-
-		if (accessKey != null) {
-			newPerson.setToken(accessKey.getToken());
-		}
+		newPerson.setToken(oldPerson.getToken());
 		newPerson.setModifyDate(LocalDateTime.now());
 		newPerson.setStatus(oldPerson.getStatus());
 

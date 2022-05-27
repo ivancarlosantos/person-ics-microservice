@@ -58,8 +58,8 @@ public class PersonController implements PersonControllerMethodes {
 	
 	@Documentation(author = Author.IVAN_SANTOS)
 	@GetMapping(path = "/list")
-	public ResponseEntity<List<PersonDTO>> list() {
-		List<PersonDTO> list = personService.list();
+	public ResponseEntity<List<Person>> list() {
+		List<Person> list = personService.list();
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
