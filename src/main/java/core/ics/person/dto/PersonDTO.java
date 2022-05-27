@@ -37,7 +37,7 @@ public class PersonDTO implements Serializable{
 	private PersonStatus status;
 	
 	public PersonDTO(Person p) {
-		super();
+		this.id = p.getId();
 		this.personName = p.getPersonName();
 		this.cpf = p.getCpf();
 		//this.address = p.getAddress();

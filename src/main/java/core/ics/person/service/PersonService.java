@@ -9,14 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import core.ics.person.dto.PersonDTO;
 import core.ics.person.enums.PersonStatus;
+import core.ics.person.model.Address;
 import core.ics.person.model.GenerateToken;
 import core.ics.person.model.Person;
 import core.ics.person.repository.PersonRepository;
 import core.ics.person.service.methodes.PersonServiceMethodes;
+import core.ics.person.utils.AddressRequest;
 import core.ics.person.utils.Token;
 
 @Service
@@ -27,13 +31,22 @@ public class PersonService implements PersonServiceMethodes {
 	
 	@Autowired
 	private Token tokenizer;
+	
+	@Autowired
+	private AddressRequest addressRequest;
 
 	@Override
 	@Transactional
 	public Person personSave(Person person) {
-
+		
+		Optional<Person> launchPerson = personRepository.fetchByName(person.getPersonName()); 
+		if (launchPerson.isPresent()) {
+			throw new RuntimeException("Pessoa já cadastrada");
+		}
 		GenerateToken token = tokenizer.generateToken();
+		Address address = addressRequest.requestCEP(person.getAddress());
 
+		person.setAddress(address.toString());
 		person.setToken(token.getToken());
 		person.setStatus(PersonStatus.ACTIVE);
 		person.setRegisterDate(LocalDateTime.now());
@@ -52,6 +65,10 @@ public class PersonService implements PersonServiceMethodes {
 		return list;
 	}
 	
+	public List<PersonDTO> list(){
+		return personRepository.findAll().stream().map(p->new PersonDTO(p)).collect(Collectors.toList());
+	}
+	
 	public Optional<Person> finPersonByID(Long id) {
 		return personRepository.findById(id);
 	}
@@ -68,8 +85,8 @@ public class PersonService implements PersonServiceMethodes {
 
 	public Optional<Person> fetchAddress(String cep) {
 		Optional<Person> fetch = personRepository.fetchAddress(cep);
-		if (fetch.isEmpty()) {
-			Optional.empty();
+		if (fetch.isEmpty() || !fetch.isPresent()) {
+			throw new RuntimeException("CEP "+HttpStatus.NOT_FOUND);
 		}
 
 		return fetch;
@@ -89,8 +106,8 @@ public class PersonService implements PersonServiceMethodes {
 	@Override
 	public Person update(Long id, Person oldPerson) {
 
-		Person newPerson = findID(id);
 		GenerateToken accessKey = tokenizer.generateToken();
+		Person newPerson = findID(id);
 
 		newPerson.setPersonName(oldPerson.getPersonName());
 		newPerson.setCpf(oldPerson.getCpf());
@@ -98,7 +115,7 @@ public class PersonService implements PersonServiceMethodes {
 		newPerson.setGender(oldPerson.getGender());
 
 		if (accessKey != null) {
-			newPerson.setToken(oldPerson.getToken());
+			newPerson.setToken(accessKey.getToken());
 		}
 		newPerson.setModifyDate(LocalDateTime.now());
 		newPerson.setStatus(oldPerson.getStatus());
