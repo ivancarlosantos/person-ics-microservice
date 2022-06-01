@@ -3,6 +3,8 @@ package core.ics.person.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import core.ics.person.enums.Gender;
 import core.ics.person.enums.PersonStatus;
 import core.ics.person.model.Address;
@@ -11,7 +13,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,6 +36,7 @@ public class PersonDTO implements Serializable{
 	
 	private String token;
 	
+	@JsonIgnore
 	private LocalDateTime modifyDate;
 	
 	private PersonStatus status;
@@ -40,7 +45,6 @@ public class PersonDTO implements Serializable{
 		this.id = p.getId();
 		this.personName = p.getPersonName();
 		this.cpf = p.getCpf();
-		//this.address = p.getAddress();
 		this.gender = p.getGender();
 		this.token = p.getToken();
 		this.status = p.getStatus();

@@ -58,8 +58,8 @@ public class PersonController implements PersonControllerMethodes {
 	
 	@Documentation(author = Author.IVAN_SANTOS)
 	@GetMapping(path = "/list")
-	public ResponseEntity<List<Person>> list() {
-		List<Person> list = personService.list();
+	public ResponseEntity<List<PersonDTO>> list() {
+		List<PersonDTO> list = personService.list();
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
@@ -67,8 +67,8 @@ public class PersonController implements PersonControllerMethodes {
 	@GetMapping(path = "/find-cep/{cep}")
 	public ResponseEntity<PersonDTO> fetchAddress(@PathVariable String cep) {
 		Optional<Person> person = personService.fetchAddress(cep);
-		Address address = addressRequest.requestCEP(cep);
 		PersonDTO dto = new PersonDTO(person.get());
+		Address address = addressRequest.requestCEP(cep);
 		dto.setModifyDate(person.get().getModifyDate());
 		dto.setAddress(address);
 		dto.setToken(person.get().getToken());

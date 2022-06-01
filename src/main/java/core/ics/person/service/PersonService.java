@@ -12,13 +12,12 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import core.ics.person.dto.PersonDTO;
 import core.ics.person.enums.PersonStatus;
-import core.ics.person.model.Address;
 import core.ics.person.model.GenerateToken;
 import core.ics.person.model.Person;
 import core.ics.person.repository.PersonRepository;
 import core.ics.person.service.methodes.PersonServiceMethodes;
-import core.ics.person.utils.AddressRequest;
 import core.ics.person.utils.Token;
 
 @Service
@@ -26,25 +25,19 @@ public class PersonService implements PersonServiceMethodes {
 
 	@Autowired
 	private PersonRepository personRepository;
-	
+
 	@Autowired
 	private Token tokenizer;
-	
-	@Autowired
-	private AddressRequest addressRequest;
 
 	@Override
-	@Transactional
 	public Person personSave(Person person) {
-		
-		Optional<Person> launchPerson = personRepository.fetchByName(person.getPersonName()); 
+
+		Optional<Person> launchPerson = personRepository.fetchByName(person.getPersonName());
 		if (launchPerson.isPresent()) {
 			throw new RuntimeException("Pessoa já cadastrada");
 		}
 		GenerateToken token = tokenizer.generateToken();
-		Address address = addressRequest.requestCEP(person.getAddress());
 
-		person.setAddress(address.toString());
 		person.setToken(token.getToken());
 		person.setStatus(PersonStatus.ACTIVE);
 		person.setRegisterDate(LocalDateTime.now());
@@ -62,13 +55,11 @@ public class PersonService implements PersonServiceMethodes {
 
 		return list;
 	}
-	
-	public List<Person> list(){
-		return personRepository.findAll().stream().map((p)->{	
-			return p;
-		}).collect(Collectors.toList());
+
+	public List<PersonDTO> list() {
+		return personRepository.findAll().stream().map(p->new PersonDTO(p)).collect(Collectors.toList());
 	}
-	
+
 	public Optional<Person> finPersonByID(Long id) {
 		return personRepository.findById(id);
 	}
@@ -92,10 +83,10 @@ public class PersonService implements PersonServiceMethodes {
 		return fetch;
 	}
 
-	private Person findID(Long id){
+	private Person findID(Long id) {
 		Optional<Person> findID = personRepository.findById(id);
 		Person person = null;
-		if (!findID.isPresent()){
+		if (!findID.isPresent()) {
 			throw new RuntimeException("Person not found");
 		}
 		person = findID.get();
@@ -107,16 +98,18 @@ public class PersonService implements PersonServiceMethodes {
 	public Person update(Long id, Person oldPerson) {
 
 		Person newPerson = findID(id);
-
+		GenerateToken token = tokenizer.generateToken();
 		newPerson.setPersonName(oldPerson.getPersonName());
 		newPerson.setCpf(oldPerson.getCpf());
 		newPerson.setAddress(oldPerson.getAddress());
 		newPerson.setGender(oldPerson.getGender());
-		newPerson.setToken(oldPerson.getToken());
+		if (token != null) {
+			newPerson.setToken(token.getToken());
+		}
 		newPerson.setModifyDate(LocalDateTime.now());
 		newPerson.setStatus(oldPerson.getStatus());
 
-		return personRepository.save(newPerson);
+		return personRepository.saveAndFlush(newPerson);
 	}
 
 	@Override
@@ -130,7 +123,7 @@ public class PersonService implements PersonServiceMethodes {
 
 	@Override
 	public void delete(Long id, Person person) {
-		//Deprecaated
+		// Deprecaated
 	}
 
 }
