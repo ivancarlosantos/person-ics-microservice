@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import core.ics.person.model.Address;
 
-@FeignClient(name = "viacep", url = "https://viacep.com.br/ws")
+@FeignClient(name = "cep-heroku", url = "https://cep-ics-api.herokuapp.com/cep")
 public interface AddressRequest {
 	
-	@GetMapping(path = "/{cep}/json/")
+	@GetMapping(path = "/{cep}")
 	Address requestCEP(@PathVariable(name = "cep") String cep);
 }
