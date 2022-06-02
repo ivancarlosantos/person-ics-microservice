@@ -69,7 +69,6 @@ public class PersonController implements PersonControllerMethodes {
 		Optional<Person> person = personService.fetchAddress(cep);
 		PersonDTO dto = new PersonDTO(person.get());
 		Address address = addressRequest.requestCEP(cep);
-		dto.setModifyDate(person.get().getModifyDate());
 		dto.setAddress(address);
 		dto.setToken(person.get().getToken());
 		return ResponseEntity.status(HttpStatus.OK).body(dto);
@@ -83,8 +82,6 @@ public class PersonController implements PersonControllerMethodes {
 		PersonDTO dto = new PersonDTO(list.get());
 		Address address = addressRequest.requestCEP(list.get().getAddress());
 		dto.setAddress(address);
-		dto.setToken(list.get().getToken());
-		dto.setModifyDate(list.get().getModifyDate());
 		return ResponseEntity.status(HttpStatus.OK).body(dto);
 	}
 
@@ -110,13 +107,6 @@ public class PersonController implements PersonControllerMethodes {
 	public ResponseEntity<Object> deleteById(@PathVariable Long id) {
 		personService.deleteById(id);
 		return ResponseEntity.ok(HttpStatus.NO_CONTENT);
-	}
-
-	@Override
-	@Documentation(author = Author.IVAN_SANTOS)
-	@DeleteMapping(path = "/delete")
-	public ResponseEntity<?> delete(@PathVariable Long id, Person person) {
-		return null;
 	}
 
 }

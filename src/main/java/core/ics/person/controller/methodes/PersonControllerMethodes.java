@@ -19,5 +19,4 @@ public interface PersonControllerMethodes {
 	
 	public ResponseEntity<?> deleteById(Long id);
 	
-	public ResponseEntity<?> delete(Long id, Person person);
 }

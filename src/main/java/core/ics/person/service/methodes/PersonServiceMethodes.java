@@ -16,6 +16,4 @@ public interface PersonServiceMethodes {
 	Person update(Long id, Person person);
 	
 	void deleteById(Long id);
-	
-	void delete(Long id, Person person);
 }

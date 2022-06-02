@@ -98,14 +98,11 @@ public class PersonService implements PersonServiceMethodes {
 	public Person update(Long id, Person oldPerson) {
 
 		Person newPerson = findID(id);
-		GenerateToken token = tokenizer.generateToken();
+
 		newPerson.setPersonName(oldPerson.getPersonName());
 		newPerson.setCpf(oldPerson.getCpf());
 		newPerson.setAddress(oldPerson.getAddress());
 		newPerson.setGender(oldPerson.getGender());
-		if (token != null) {
-			newPerson.setToken(token.getToken());
-		}
 		newPerson.setModifyDate(LocalDateTime.now());
 		newPerson.setStatus(oldPerson.getStatus());
 
@@ -119,11 +116,6 @@ public class PersonService implements PersonServiceMethodes {
 			throw new RuntimeException("Error");
 		}
 		personRepository.deleteById(id);
-	}
-
-	@Override
-	public void delete(Long id, Person person) {
-		// Deprecaated
 	}
 
 }
